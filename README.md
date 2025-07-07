@@ -1,6 +1,6 @@
 # Trail Explorer
 
-Trail Explorer is an AI assistant that uses Model Context Protocol (MCP) implementation to provide intelligent trail discovery capabilities. Built on the MCP standard, it enables seamless integration between Large Language Models (LLMs) and OpenStreetMap (OSM) trail data through the Overpass API. The system demonstrates how MCP can bridge AI models with real-world geographic data, allowing users to discover hiking, biking, and walking trails through natural language queries. The system features:
+Trail Explorer is an AI assistant that uses Model Context Protocol (MCP) implementation to provide intelligent trail discovery capabilities. Built on the MCP standard, it enables seamless integration between Large Language Models (LLMs) and OpenStreetMap (OSM) trail data through the Overpass API. The system demonstrates how MCP can bridge AI models with complex data, allowing users to discover hiking, biking, and walking trails through natural language queries. 
 
 ## Features
 
@@ -13,15 +13,14 @@ Trail Explorer is an AI assistant that uses Model Context Protocol (MCP) impleme
 ### 1. Create and Activate a Virtual Environment
 ```bash
 uv venv
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+source .venv/bin/activate
 ```
 
 ### 2. Install All Project Dependencies
 ```bash
 uv sync
 ```
-- This will install all dependencies exactly as specified in `uv.lock` (reproducible installs).
-- If `uv.lock` is missing, it will resolve dependencies from `pyproject.toml` and create a new `uv.lock` file.
+
 
 
 ### 3. Set Up Environment Variables
@@ -34,14 +33,16 @@ ANTHROPIC_API_KEY=your_anthropic_api_key_here
 ```bash
 python -m app.chat_app
 ```
-*You do NOT need to run the server manually; the chat app will start it automatically. Uses ``stdio`` transport mechanism*
+*You do NOT need to run the server manually; the chat app will start it automatically using ``stdio`` transport mechanism*
 
 ## Usage Examples
 
 ### CLI Chat App
 The chat app provides an interactive interface with the following commands:
 - `help` - Show help and example queries
-- `tools` - List available tools and their descriptions
+- `tools` - Show available tools and their descriptions
+- `resources` - Show available resources and their descriptions
+- `prompts` - Show available prompts and their descriptions
 - `info` - Show server information
 - `clear` - Clear the screen
 - `quit/exit/q` - Exit the application
@@ -52,6 +53,10 @@ The chat app provides an interactive interface with the following commands:
 - "Show me walking trails near coordinates 40.7, -74.0, 40.8, -73.9"
 - "Get trail statistics for Golden Gate Park"
 - "What types of trails are supported?"
+- "What types of trails are supported?"
+- "Compare trails between Central Park and Prospect Park"
+- "Plan a hiking adventure in Yosemite"
+- "Analyze trail surfaces in Boulder"
 
 The LLM will automatically use the appropriate tools to search for trails and provide comprehensive responses.
 
