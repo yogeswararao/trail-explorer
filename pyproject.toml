@@ -1,0 +1,14 @@
+[project]
+name = "trail-explorer"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.55.0",
+    "python-dotenv",
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.10.0",
+    "pydantic",
+    "colorama>=0.4.6",
+]
