@@ -3,7 +3,7 @@ import logging
 
 colorama_init(autoreset=True)
 
-SERVER_COLOR = Fore.BLUE
+SERVER_COLOR = Fore.GREEN
 CLIENT_COLOR = Fore.CYAN
 APP_COLOR = Fore.YELLOW
 RESET = Style.RESET_ALL

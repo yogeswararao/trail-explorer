@@ -25,7 +25,7 @@ from app.llm_mcp_connector import process_user_query, get_available_tools, get_a
 logger = setup_logger("chat_app", APP_COLOR, fmt="[APP] %(levelname)s: %(message)s")
 
 # Configure response logger
-response_logger = setup_logger("chat_app_response", Fore.GREEN, fmt="%(message)s")
+response_logger = setup_logger("chat_app_response", Fore.LIGHTBLUE_EX, fmt="%(message)s")
 
 class TrailExplorerChat:
     """Interactive chat interface for Trail Explorer."""
@@ -33,13 +33,20 @@ class TrailExplorerChat:
     def __init__(self):
         """Initialize the chat application."""
         self.running = False
+        self.commands = {
+            'help': self.show_help,
+            'tools': self.show_tools,
+            'resources': self.show_resources,
+            'prompts': self.show_prompts,
+            'info': self.show_server_info,
+            'clear': self.clear_screen,
+        }
         
     async def start(self):
         """Start the interactive chat session."""
         logger.info("Trail Explorer Chat App")
         logger.info("=" * 50)
         logger.info("Welcome! I can help you find hiking, biking, and walking trails.")
-        logger.info("I'll automatically search for trails based on your queries.")
         logger.info("Type 'help' for available commands, 'quit' to exit.")
         print()
         
@@ -49,31 +56,13 @@ class TrailExplorerChat:
             try:
                 # Get user input
                 user_input = input("You: ").strip()
-                
                 if not user_input:
                     continue
-                
-                # Handle special commands
                 if user_input.lower() in ['quit', 'exit', 'q']:
                     await self.quit()
                     break
-                elif user_input.lower() == 'help':
-                    await self.show_help()
-                    continue
-                elif user_input.lower() == 'tools':
-                    await self.show_tools()
-                    continue
-                elif user_input.lower() == 'resources':
-                    await self.show_resources()
-                    continue
-                elif user_input.lower() == 'prompts':
-                    await self.show_prompts()
-                    continue
-                elif user_input.lower() == 'info':
-                    await self.show_server_info()
-                    continue
-                elif user_input.lower() == 'clear':
-                    os.system('clear' if os.name == 'posix' else 'cls')
+                if user_input in self.commands:
+                    await self.commands[user_input]()
                     continue
                 
                 # Process the query
@@ -117,39 +106,28 @@ class TrailExplorerChat:
             I'll automatically use the appropriate tools, resources, and prompts to search for trails and provide comprehensive responses.
         """)
         response_logger.info(help_text)
-    
+
     async def show_tools(self):
-        """Show available tools."""
-        logger.info("Available Tools:")
-        logger.info("-" * 30)
-        tools_info = await get_available_tools()
-        response_logger.info(tools_info)
-        print()
-    
+        await self._display_section("Available Tools", get_available_tools)
+
     async def show_resources(self):
-        """Show available resources."""
-        logger.info("Available Resources:")
-        logger.info("-" * 30)
-        resources_info = await get_available_resources()
-        response_logger.info(resources_info)
-        print()
-    
+        await self._display_section("Available Resources", get_available_resources)
+
     async def show_prompts(self):
-        """Show available prompts."""
-        logger.info("Available Prompts:")
-        logger.info("-" * 30)
-        prompts_info = await get_available_prompts()
-        response_logger.info(prompts_info)
-        print()
-    
+        await self._display_section("Available Prompts", get_available_prompts)
+
     async def show_server_info(self):
-        """Show server information."""
-        logger.info("Server Information:")
-        logger.info("-" * 30)
-        server_info = await get_server_info()
-        response_logger.info(server_info)
+        await self._display_section("Server Information", get_server_info)
+
+    def clear_screen(self):
+        os.system("cls" if os.name == "nt" else "clear")
+
+    async def _display_section(self, title, fetch_fn):
+        logger.info(f"{title}\n" + "-" * 30)
+        data = await fetch_fn()
+        response_logger.info(data + "\n")
         print()
-    
+
     async def quit(self):
         """Quit the application."""
         logger.info("Goodbye! Thanks for using Trail Explorer Chat.")
@@ -173,5 +151,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    exit_code = asyncio.run(main())
-    sys.exit(exit_code) 
+    sys.exit(asyncio.run(main())) 

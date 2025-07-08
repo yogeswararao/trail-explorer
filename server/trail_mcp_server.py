@@ -283,49 +283,6 @@ def validate_trail_types(trail_types: Optional[List[str]]) -> List[str]:
     return valid_types
 
 
-# Resources
-@mcp.resource("trails://bbox/{south}/{west}/{north}/{east}")
-def get_trails_bbox(south: float, west: float, north: float, east: float) -> str:
-    """Get trails within a bounding box (south, west, north, east coordinates)."""
-    try:
-        query = OverpassQueryBuilder.build_bbox_query(south, west, north, east)
-        data = asyncio.run(query_overpass(query))
-        return format_trail_data(data)
-    except Exception as e:
-        logger.error(f"Error in get_trails_bbox: {e}")
-        return f"Error retrieving trail data: {str(e)}"
-
-
-@mcp.resource("trails://area/{area_name}")
-def get_trails_area(area_name: str) -> str:
-    """Get trails within a named area (city, park, region)."""
-    try:
-        query = OverpassQueryBuilder.build_area_query(area_name)
-        data = asyncio.run(query_overpass(query))
-        return format_trail_data(data)
-    except Exception as e:
-        logger.error(f"Error in get_trails_area: {e}")
-        return f"Error retrieving trail data: {str(e)}"
-
-
-@mcp.resource("trails://types")
-def get_trail_types() -> str:
-    """Get information about supported trail types and their OSM mappings."""
-    info = "Supported Trail Types:\n\n"
-
-    for trail_type, tags in TRAIL_TYPES.items():
-        info += f"{trail_type.title()}:\n"
-        info += f"- Route types: {', '.join(tags.get('route', []))}\n"
-        info += f"- Highway types: {', '.join(tags.get('highway', []))}\n"
-        if 'foot' in tags:
-            info += f"- Foot access: {tags['foot']}\n"
-        if 'bicycle' in tags:
-            info += f"- Bicycle access: {tags['bicycle']}\n"
-        info += "\n"
-
-    return info
-
-
 # Tools
 @mcp.tool()
 async def search_trails_by_coordinates(
@@ -511,6 +468,48 @@ async def get_trail_statistics(
     except Exception as e:
         logger.error(f"Error in get_trail_statistics: {e}")
         return f"Error getting trail statistics: {str(e)}"
+
+# Resources
+@mcp.resource("trails://bbox/{south}/{west}/{north}/{east}")
+def get_trails_bbox(south: float, west: float, north: float, east: float) -> str:
+    """Get trails within a bounding box (south, west, north, east coordinates)."""
+    try:
+        query = OverpassQueryBuilder.build_bbox_query(south, west, north, east)
+        data = asyncio.run(query_overpass(query))
+        return format_trail_data(data)
+    except Exception as e:
+        logger.error(f"Error in get_trails_bbox: {e}")
+        return f"Error retrieving trail data: {str(e)}"
+
+
+@mcp.resource("trails://area/{area_name}")
+def get_trails_area(area_name: str) -> str:
+    """Get trails within a named area (city, park, region)."""
+    try:
+        query = OverpassQueryBuilder.build_area_query(area_name)
+        data = asyncio.run(query_overpass(query))
+        return format_trail_data(data)
+    except Exception as e:
+        logger.error(f"Error in get_trails_area: {e}")
+        return f"Error retrieving trail data: {str(e)}"
+
+
+@mcp.resource("trails://types")
+def get_trail_types() -> str:
+    """Get information about supported trail types and their OSM mappings."""
+    info = "Supported Trail Types:\n\n"
+
+    for trail_type, tags in TRAIL_TYPES.items():
+        info += f"{trail_type.title()}:\n"
+        info += f"- Route types: {', '.join(tags.get('route', []))}\n"
+        info += f"- Highway types: {', '.join(tags.get('highway', []))}\n"
+        if 'foot' in tags:
+            info += f"- Foot access: {tags['foot']}\n"
+        if 'bicycle' in tags:
+            info += f"- Bicycle access: {tags['bicycle']}\n"
+        info += "\n"
+
+    return info
 
 
 # Prompts
